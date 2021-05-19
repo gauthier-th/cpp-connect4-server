@@ -1,0 +1,25 @@
+{
+  "name": "cpp-connect4-server",
+  "version": "1.0.0",
+  "description": "Node.js server for the C++ Connect4 ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gauthier-th/cpp-connect4-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gauthier-th/cpp-connect4-server/issues"
+  },
+  "homepage": "https://github.com/gauthier-th/cpp-connect4-server#readme",
+  "dependencies": {
+    "dotenv": "^9.0.2",
+    "express": "^4.17.1",
+    "ws": "^7.4.5"
+  }
+}
