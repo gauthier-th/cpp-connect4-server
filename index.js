@@ -16,12 +16,15 @@ app.all('*', (req, res) => {
 
 
 const games = [];
-
+// const g1 = new Game(uuidv4());
+// g1.addPlayer(uuidv4(), "test username", null);
+// const games = (new Array(40)).fill(0).map(() => g1);
 
 const wsServer = new ws.Server({ noServer: true });
 wsServer.on('connection', socket => {
 	socket.on('message', (message) => {
 		try {
+			console.log(message);
 			const json = JSON.parse(message);
 			if (json.type === 'create' && json.username) {
 				const game = new Game(uuidv4());
@@ -47,8 +50,17 @@ wsServer.on('connection', socket => {
 			}
 			else if (json.type === 'join' && json.gameId && json.username) {
 				const game = games.find(game => game.id === json.gameId);
-				if (!game)
-					return;
+				if (!game) {
+					return socket.send(JSON.stringify({
+						type: 'list',
+						games: games
+							.filter(game => game.playing === false)
+							.map(game => ({
+								id: game.id,
+								username: game.players[0].username
+							}))
+					}));
+				}
 				const userId = uuidv4();
 				const youStart = random(0, 1) === 0;
 				game.addPlayer(userId, json.username, socket);
@@ -73,7 +85,7 @@ wsServer.on('connection', socket => {
 				}));
 				games.splice(games.indexOf(game), 1);
 			}
-			else if (json.type === 'token' && json.userId && json.column) {
+			else if (json.type === 'token' && json.userId && json.column !== undefined) {
 				const game = gameByUserId(json.userId);
 				if (!game)
 					return;
@@ -88,10 +100,10 @@ wsServer.on('connection', socket => {
 	});
 	socket.on('close', () => {
 		const game = gameBySocket(socket);
-		if (!game || !game.players[0])
+		if (!game)
 			return;
 		game.removePlayerBySocket(socket);
-		game.players[0].send(JSON.stringify({
+		game.players[0]?.send(JSON.stringify({
 			type: 'end',
 			youWin: true
 		}));
@@ -103,7 +115,7 @@ function gameByUserId(userId) {
 	return games.find(game => game.players.find(player => player.userId === userId));
 }
 function gameBySocket(socket) {
-	return games.find(game => game.players.find(player => player.socket.id === socket.id));
+	return games.find(game => game.players.find(player => player.socket?.id === socket.id));
 }
 
 

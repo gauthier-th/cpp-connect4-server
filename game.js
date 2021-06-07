@@ -7,8 +7,8 @@ class Game {
 		this.players = [];
 	}
 
-	setPublic(public) {
-		this.public = public;
+	setPublic(isPublic) {
+		this.public = isPublic;
 	}
 	setPlaying(playing) {
 		this.playing = playing;
@@ -20,7 +20,7 @@ class Game {
 		this.players = this.players.filter(player => player.userId !== userId);
 	}
 	removePlayerBySocket(socket) {
-		this.players = this.players.filter(player => player.socket.id !== socket.id);
+		this.players = this.players.filter(player => player.socket?.id !== socket.id);
 	}
 
 }
